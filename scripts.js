@@ -1,11 +1,15 @@
 document.addEventListener('DOMContentLoaded', function() {
     const projectLinks = document.querySelectorAll('.projet-list a');
+    const experienceLinks = document.querySelectorAll('.experience-list a');
     const welcomeSection = document.querySelector('.frame-content-left .welcome');
     const projectSections = document.querySelectorAll('.projet-content');
     const frameContentLeft = document.querySelector('.frame-content-left');
     const modal = document.getElementById("project-modal");
     const modalContent = document.querySelector(".modal-body");
     const closeModal = document.querySelector(".close");
+    
+    const mainMenuList = document.querySelector('ul.projet-list');
+    const experienceMenuList = document.querySelector('.experience-list');
 
     if (!modalContent) {
         console.error("Modal content element not found");
@@ -13,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     let currentProject = null;
+    let isInExperienceMenu = false;
 
     projectLinks.forEach(link => {
         link.addEventListener('click', function(event) {
@@ -20,33 +25,97 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const projectId = this.getAttribute('data-id');
 
-            if (currentProject === projectId) {
+            if (projectId === 'projet2') {
+                frameContentLeft.classList.add('fade-out');
+
+                setTimeout(() => {
+                    projectSections.forEach(section => section.style.display = 'none');
+                    welcomeSection.style.display = 'none';
+                    
+                    const projectContent = document.getElementById(projectId);
+                    if (projectContent) {
+                        projectContent.style.display = 'block';
+                    }
+                    
+                    mainMenuList.style.display = 'none';
+                    experienceMenuList.style.display = 'flex';
+                    isInExperienceMenu = true;
+                    
+                    frameContentLeft.classList.remove('fade-out');
+                }, 500);
+
+                currentProject = projectId;
+            } 
+            else {
+                if (currentProject === projectId) {
+                    frameContentLeft.classList.add('fade-out');
+
+                    setTimeout(() => {
+                        projectSections.forEach(section => section.style.display = 'none');
+                        welcomeSection.style.display = 'block';
+                        frameContentLeft.classList.remove('fade-out');
+                    }, 500);
+
+                    currentProject = null;
+                } else {
+                    frameContentLeft.classList.add('fade-out');
+
+                    setTimeout(() => {
+                        projectSections.forEach(section => section.style.display = 'none');
+                        welcomeSection.style.display = 'none';
+
+                        const projectContent = document.getElementById(projectId);
+                        if (projectContent) {
+                            projectContent.style.display = 'block';
+                        }
+
+                        frameContentLeft.classList.remove('fade-out');
+                    }, 500);
+
+                    currentProject = projectId;
+                }
+            }
+        });
+    });
+
+    experienceLinks.forEach(link => {
+        link.addEventListener('click', function(event) {
+            event.preventDefault();
+
+            const experienceId = this.getAttribute('data-id');
+
+            if (experienceId === 'experience6') {
                 frameContentLeft.classList.add('fade-out');
 
                 setTimeout(() => {
                     projectSections.forEach(section => section.style.display = 'none');
                     welcomeSection.style.display = 'block';
+                    
+                    experienceMenuList.style.display = 'none';
+                    mainMenuList.style.display = 'flex';
+                    isInExperienceMenu = false;
+                    
                     frameContentLeft.classList.remove('fade-out');
                 }, 500);
 
                 currentProject = null;
-            } else {
+            } 
+            else {
                 frameContentLeft.classList.add('fade-out');
 
                 setTimeout(() => {
                     projectSections.forEach(section => section.style.display = 'none');
                     welcomeSection.style.display = 'none';
 
-                    const projectContent = document.getElementById(projectId);
-
-                    if (projectContent) {
-                        projectContent.style.display = 'block';
+                    const experienceContent = document.getElementById(experienceId);
+                    if (experienceContent) {
+                        experienceContent.style.display = 'block';
                     }
 
                     frameContentLeft.classList.remove('fade-out');
                 }, 500);
 
-                currentProject = projectId;
+                currentProject = experienceId;
             }
         });
     });
@@ -57,7 +126,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const projectType = this.getAttribute('data-type');
             const projectIds = this.getAttribute('data-id').split(',');
 
-            modalContent.innerHTML = ''; // Clear previous content
+            modalContent.innerHTML = ''; 
 
             if (projectType === 'video') {
                 const video = document.createElement('video');
@@ -80,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 if (projectIds.length > 1) {
                     const prevButton = document.createElement('button');
-                    prevButton.innerHTML = '';
+                    prevButton.innerHTML = '‹';
                     prevButton.className = 'prev';
                     prevButton.onclick = function() {
                         currentIndex = (currentIndex > 0) ? currentIndex - 1 : projectIds.length - 1;
@@ -89,7 +158,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     };
 
                     const nextButton = document.createElement('button');
-                    nextButton.innerHTML = '';
+                    nextButton.innerHTML = '›';
                     nextButton.className = 'next';
                     nextButton.onclick = function() {
                         currentIndex = (currentIndex < projectIds.length - 1) ? currentIndex + 1 : 0;
